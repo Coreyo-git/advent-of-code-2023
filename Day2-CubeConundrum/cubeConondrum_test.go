@@ -1,4 +1,4 @@
-package cube
+package main
 
 import "testing"
 
@@ -27,4 +27,25 @@ func TestAdd(t *testing.T){
     if got != want {
         t.Errorf("got %q, wanted %q", got, want)
     }
+}
+
+func TestGetGameIDAsInt(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int
+	}{
+		{"Game 1", 1},
+		{"Game 42", 42},
+		{"No numeric in string", 0},
+	}
+
+	for _, test := range tests {
+		t.Run(test.input, func(t *testing.T) {
+			result := getGameIDAsInt(test.input)
+
+			if result != test.expected {
+				t.Errorf("Expected %d, got %d", test.expected, result)
+			}
+		})
+	}
 }

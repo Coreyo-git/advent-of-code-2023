@@ -1,10 +1,12 @@
-package cube
+package main
 
 import (
 	"bufio"
 	"fmt"
 	"log"
 	"os"
+	"strings"
+	"regexp"
 	"strconv"
 )
 
@@ -25,12 +27,20 @@ func main() {
 
 	// Loop each line in the file
 	for scanner.Scan() {
-		// store game id
-		var gameId string
-
 		// Get current line from file
 		line := scanner.Text()
+		
+		// Split the line by colon to get the game ID
+		parts := strings.Split(line, ":")
+		if len(parts) != 2 {
+			fmt.Println("Error getting game ID from line:", line)
+			continue
+		}
 
+		gameID := getGameIDAsInt(parts[0])
+
+		fmt.Println("Game ID: ", gameID)
+		break
 	}
 
 	// Check for errors during scanning
@@ -46,6 +56,27 @@ func gameIsPossible(game string) int {
 	
 
 	return possibleGame
+}
+
+// returns an int of the gameID from the gameID String
+func getGameIDAsInt(gameIDString string) int {
+	// Regex to match the numeric in string
+	numericRegex := regexp.MustCompile("[0-9]+")
+
+	gameIDMatches := numericRegex.FindAllString(gameIDString, -1)
+	
+	if len(gameIDMatches) == 0 {
+		fmt.Println("No numeric found in:", gameIDString)
+		return 0
+	}
+
+	gameIDInt, err := strconv.Atoi(string(gameIDMatches[0]))
+	if err != nil {
+		fmt.Println(err)
+		return 0
+	} else {
+		return gameIDInt
+	}
 }
 
 
