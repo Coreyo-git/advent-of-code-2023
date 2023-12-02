@@ -36,10 +36,24 @@ func main() {
 			fmt.Println("Error getting game ID from line:", line)
 			continue
 		}
+		
+		// sets game id string equal to parts [0]
+		gameIDString := parts[0]
 
-		gameID := getGameIDAsInt(parts[0])
+		// get game ID as int from game id string
+		gameID := getStringAsInt(gameIDString)
 
+		// debugging print of game id
 		fmt.Println("Game ID: ", gameID)
+
+		// sets game as the game section of the split
+		game := parts[1]
+
+		Add(sumOfPossibleGames, getSumOfPossibleGamesFromGame(game))
+
+		
+
+		
 		break
 	}
 
@@ -50,27 +64,39 @@ func main() {
 
 }
 
-func gameIsPossible(game string) int {
-	var possibleGame = 0
 
-	
 
-	return possibleGame
+func getSumOfPossibleGamesFromGame(game string) int {
+	var possibleGames = 0
+
+			
+	// split each draw in the game
+	draws := strings.Split(game, ";")
+
+	for _, draw := range draws {
+		fmt.Println("Draw:",draw)
+		cubes := strings.Split(draw, ",")
+		for _, cube := range cubes {
+			fmt.Println(cube)
+		}
+	}
+
+	return possibleGames
 }
 
-// returns an int of the gameID from the gameID String
-func getGameIDAsInt(gameIDString string) int {
+// returns an int of from a string
+func getStringAsInt(String string) int {
 	// Regex to match the numeric in string
 	numericRegex := regexp.MustCompile("[0-9]+")
 
-	gameIDMatches := numericRegex.FindAllString(gameIDString, -1)
+	numericMatches := numericRegex.FindAllString(String, -1)
 	
-	if len(gameIDMatches) == 0 {
-		fmt.Println("No numeric found in:", gameIDString)
+	if len(numericMatches) == 0 {
+		fmt.Println("No numeric found in:", String)
 		return 0
 	}
 
-	gameIDInt, err := strconv.Atoi(string(gameIDMatches[0]))
+	gameIDInt, err := strconv.Atoi(string(numericMatches[0]))
 	if err != nil {
 		fmt.Println(err)
 		return 0

@@ -29,19 +29,20 @@ func TestAdd(t *testing.T){
     }
 }
 
-func TestGetGameIDAsInt(t *testing.T) {
+func TestGetStringAsInt(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected int
 	}{
 		{"Game 1", 1},
 		{"Game 42", 42},
+		{"7 red", 7},
 		{"No numeric in string", 0},
 	}
 
 	for _, test := range tests {
 		t.Run(test.input, func(t *testing.T) {
-			result := getGameIDAsInt(test.input)
+			result := getStringAsInt(test.input)
 
 			if result != test.expected {
 				t.Errorf("Expected %d, got %d", test.expected, result)
