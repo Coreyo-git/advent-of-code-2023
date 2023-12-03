@@ -44,44 +44,73 @@ func main() {
 		gameID := getStringAsInt(gameIDString)
 
 		// debugging print of game id
-		fmt.Println("Game ID: ", gameID)
+		// fmt.Println("Game ID: ", gameID)
 
 		// sets game as the game section of the split
 		game := parts[1]
 
-		Add(sumOfPossibleGames, getSumOfPossibleGamesFromGame(game))
-
-		
-
-		
-		break
+		if gameIsPossible(game) {
+			sumOfPossibleGames = Add(sumOfPossibleGames, gameID)
+		}
 	}
+
+	fmt.Println("Sum of possible games: ", sumOfPossibleGames)
 
 	// Check for errors during scanning
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-
 }
 
+func gameIsPossible(game string) bool {
 
-
-func getSumOfPossibleGamesFromGame(game string) int {
-	var possibleGames = 0
-
-			
 	// split each draw in the game
 	draws := strings.Split(game, ";")
 
+	// loop through each draw and check if the draw is within bounds
 	for _, draw := range draws {
-		fmt.Println("Draw:",draw)
 		cubes := strings.Split(draw, ",")
 		for _, cube := range cubes {
-			fmt.Println(cube)
+			if !isDrawWithinBounds(cube) {
+				return false
+			}
 		}
 	}
 
-	return possibleGames
+	// return true if all draws are within bounds
+	return true
+}
+
+func isDrawWithinBounds(draw string) bool {
+	// trim whitespace
+	draw = strings.TrimSpace(draw)
+	
+	// seperate draw by space character
+	parts := strings.Split(draw, " ")
+
+	if len(parts) != 2 {
+		fmt.Println("Error getting game ID from line:", draw)
+		return false
+	}
+
+	// assign num and color sections
+	num := getStringAsInt(parts[0])
+	color := parts[1]
+
+	switch color {
+	case "red":
+		if num > redMax{ return false }
+	case "blue":
+		if num > blueMax{ return false }
+	case "green":
+		if num > greenMax{ return false }
+	default:
+		fmt.Print("No Color found in draw evaluation")
+		return false
+	}
+
+	// if it passes all cases return true
+	return true
 }
 
 // returns an int of from a string
@@ -104,7 +133,6 @@ func getStringAsInt(String string) int {
 		return gameIDInt
 	}
 }
-
 
 // Sums two integers
 func Add(x, y int) (res int) {
