@@ -5,15 +5,21 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 var redMax = 12
 var greenMax = 13
 var blueMax = 14
+
+var highestBlue int
+var highestRed int
+var highestGreen int
+
 var sumOfPossibleGames = 0
+var sumOfPowerOfHighestCubes = 0
 
 func main() {
 	// Open file containing games data
@@ -29,14 +35,14 @@ func main() {
 	for scanner.Scan() {
 		// Get current line from file
 		line := scanner.Text()
-		
+
 		// Split the line by colon to get the game ID
 		parts := strings.Split(line, ":")
 		if len(parts) != 2 {
 			fmt.Println("Error getting game ID from line:", line)
 			continue
 		}
-		
+
 		// sets game id string equal to parts [0]
 		gameIDString := parts[0]
 
@@ -52,9 +58,23 @@ func main() {
 		if gameIsPossible(game) {
 			sumOfPossibleGames = Add(sumOfPossibleGames, gameID)
 		}
+
+		// debugging print of highest cubes
+		fmt.Println("GameID:", gameID, "\tH Blue:", highestBlue, "\tH Green:", highestGreen, "\tH Red:", highestRed, "  \tP 3:", highestBlue*highestGreen*highestRed)
+
+		// calculate power of all 3 cubes
+		sumOfPowerOfHighestCubes += (highestBlue * highestGreen * highestRed)
+
+		// clear highest found and restart game loop
+		highestBlue = 0
+		highestGreen = 0
+		highestRed = 0
+
+		// fmt.Println("Highest Blue:", highestBlue, "Highest Green:", highestGreen, "Highest Red:", highestRed)
 	}
 
 	fmt.Println("Sum of possible games: ", sumOfPossibleGames)
+	fmt.Println("Sum of power of highest cubes:", sumOfPowerOfHighestCubes)
 
 	// Check for errors during scanning
 	if err := scanner.Err(); err != nil {
@@ -84,7 +104,7 @@ func gameIsPossible(game string) bool {
 func isDrawWithinBounds(draw string) bool {
 	// trim whitespace
 	draw = strings.TrimSpace(draw)
-	
+
 	// seperate draw by space character
 	parts := strings.Split(draw, " ")
 
@@ -99,11 +119,24 @@ func isDrawWithinBounds(draw string) bool {
 
 	switch color {
 	case "red":
-		if num > redMax{ return false }
+		if num > highestRed {
+			highestRed = num
+		}
+		// below removed for part 2 as it wasn't relevant wheter or not the game was within bounds
+		// if num > redMax{ return false }
 	case "blue":
-		if num > blueMax{ return false }
+		if num > highestBlue {
+			highestBlue = num
+		}
+		// fmt.Println("Blue:", num, "\t Highest Blue: ", highestBlue)
+		// below removed for part 2 as it wasn't relevant wheter or not the game was within bounds
+		// if num > blueMax{ return false }
 	case "green":
-		if num > greenMax{ return false }
+		if num > highestGreen {
+			highestGreen = num
+		}
+		// below removed for part 2 as it wasn't relevant wheter or not the game was within bounds
+		// if num > greenMax{ return false }
 	default:
 		fmt.Print("No Color found in draw evaluation")
 		return false
@@ -119,7 +152,7 @@ func getStringAsInt(String string) int {
 	numericRegex := regexp.MustCompile("[0-9]+")
 
 	numericMatches := numericRegex.FindAllString(String, -1)
-	
+
 	if len(numericMatches) == 0 {
 		fmt.Println("No numeric found in:", String)
 		return 0
